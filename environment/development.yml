@@ -1,11 +1,28 @@
 version: "3.9"
 
 services:
+  php-fpm:
+    build:
+      context: ./php-fpm
+    container_name: php-fpm-boilerplate
+    working_dir: /web
+    volumes:
+      - ../web:/web
+    environment:
+      - FPM_MAX_CHILDREN=2
+    networks:
+      - web
+
   nginx:
     build:
       context: ./nginx
     container_name: web-nginx-boilerplate
-    working_dir: /web/frontend
+    working_dir: /web
+    depends_on:
+      - php-fpm
+    volumes:
+      - ../web:/web
+      - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
     networks:
